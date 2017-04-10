@@ -3,7 +3,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional/EN">
 <html>
   <head>
-    <title>Íàöèîíàëüíûé ôðîíò</title>
+    <title>Национальный фронт</title>
     <meta charset="UTF-8">
     <meta name="generator" content="PyScripter">
     <style type="text/css">
@@ -79,26 +79,26 @@
   </head>
   <body>
     <header>
-        <div class="zag">ÍÀÖÈÎÍÀËÜÍÛÉ ÔÐÎÍÒ ÎÑÂÎÁÎÆÄÅÍÈß ÊÈÐÃÈÇÈÈ
+        <div class="zag">НАЦИОНАЛЬНЫЙ ФРОНТ ОСВОБОЖДЕНИЯ КИРГИЗИИ
         </div>
     </header>
     <div><img src="http://asialive.info/images/posts/pimg/pimg-272529.jpg" height="400px" height="100" align="right" vspace="-500px"></div>
     <ul class="main-menu">
-        <li><a href="">Èñòîðèÿ</a></li>
-        <li><a href="">Æèçíü</a></li>
-        <li><a href="">Ðåâîëþöèÿ</a></li>
-        <li><a href="">Íàøå ïîäïîëüå</a></li>
-        <li><a href="">Íàñòîÿùåå</a></li>
-        <li><a href="">Áóäóùåå</a></li>
-        <li><a href="">Ýññåèñòèêà</a></li>
-        <li><a href="">Ýïîñ Ìàíàñ è ìû</a></li>
-        <li><a href="">Èññûê-êóëüñêèé ôðîíò</a></li>
-        <li><a href="">Î ñîçäàòåëÿõ</a></li>
+        <li><a href="">История</a></li>
+        <li><a href="">Жизнь</a></li>
+        <li><a href="">Революция</a></li>
+        <li><a href="">Наше подполье</a></li>
+        <li><a href="">Настоящее</a></li>
+        <li><a href="">Будущее</a></li>
+        <li><a href="">Эссеистика</a></li>
+        <li><a href="">Эпос Манас и мы</a></li>
+        <li><a href="">Иссык-кульский фронт</a></li>
+        <li><a href="">О создателях</a></li>
 
     </ul>
 
 
 
-    <footer>Îñíîâàòåëè</footer>
+    <footer>Основатели</footer>
   </body>
 </html>
