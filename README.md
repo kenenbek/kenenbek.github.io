@@ -4,7 +4,7 @@
 <html>
   <head>
     <title>Íàöèîíàëüíûé ôðîíò</title>
-    <meta charset="windows-1251">
+    <meta charset="UTF-8">
     <meta name="generator" content="PyScripter">
     <style type="text/css">
     html, body{
