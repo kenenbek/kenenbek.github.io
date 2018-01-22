@@ -1,1 +1,1 @@
-<img src="negro.jpeg" alt="Negros">
+<img src="dem.jpg" alt="Negros">
