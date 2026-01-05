@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treasure of the Turkic Lands - Kashgari Quest</title>
+    <title>Kashgari Map — Turkic Lands</title>
     <link rel="stylesheet" href="lib/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,90 +15,169 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --moma-black: #1a1a1a;
+            --moma-white: #ffffff;
+            --moma-gray-100: #f7f7f7;
+            --moma-gray-200: #e5e5e5;
+            --moma-gray-300: #cccccc;
+            --moma-gray-500: #737373;
+            --moma-gray-700: #404040;
+            --moma-red: #e53935;
+            --moma-blue: #1976d2;
+            --moma-yellow: #fdd835;
+            --moma-accent: #000000;
+        }
+
         body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #2c1810 0%, #4a3228 100%);
-            color: #e8d5b7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--moma-white);
+            color: var(--moma-black);
             min-height: 100vh;
+            line-height: 1.5;
         }
 
         .header {
-            background: linear-gradient(180deg, #1a0f0a 0%, #2c1810 100%);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 3px solid #c9a227;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: var(--moma-white);
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--moma-gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .header h1 {
-            font-size: 2.2em;
-            color: #c9a227;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 5px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--moma-black);
+            letter-spacing: -0.02em;
         }
 
         .header .subtitle {
-            font-style: italic;
-            color: #b8a07a;
-            font-size: 1.1em;
+            font-weight: 400;
+            color: var(--moma-gray-500);
+            font-size: 0.875rem;
+        }
+
+        .header-badge {
+            background: var(--moma-black);
+            color: var(--moma-white);
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         .controls {
-            background: rgba(26, 15, 10, 0.95);
-            padding: 15px 20px;
+            background: var(--moma-gray-100);
+            padding: 16px 32px;
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 24px;
             align-items: center;
-            justify-content: center;
-            border-bottom: 2px solid #8b6914;
+            border-bottom: 1px solid var(--moma-gray-200);
         }
 
         .control-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .control-group label {
-            font-weight: bold;
-            color: #c9a227;
+            font-weight: 500;
+            color: var(--moma-gray-700);
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
-        select, button {
-            padding: 10px 15px;
-            border: 2px solid #8b6914;
-            border-radius: 5px;
-            background: #3d2817;
-            color: #e8d5b7;
-            font-size: 14px;
+        select {
+            padding: 10px 16px;
+            border: 1px solid var(--moma-gray-300);
+            border-radius: 0;
+            background: var(--moma-white);
+            color: var(--moma-black);
+            font-family: inherit;
+            font-size: 0.875rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23404040' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
         }
 
-        select:hover, button:hover {
-            background: #5a3d2a;
-            border-color: #c9a227;
+        select:hover, select:focus {
+            border-color: var(--moma-black);
+            outline: none;
         }
 
         button {
-            background: linear-gradient(180deg, #8b6914 0%, #5a4510 100%);
-            color: #fff;
-            font-weight: bold;
+            padding: 10px 20px;
+            border: 1px solid var(--moma-black);
+            border-radius: 0;
+            background: var(--moma-white);
+            color: var(--moma-black);
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         button:hover {
-            background: linear-gradient(180deg, #c9a227 0%, #8b6914 100%);
+            background: var(--moma-black);
+            color: var(--moma-white);
+        }
+
+        button.active {
+            background: var(--moma-black);
+            color: var(--moma-white);
         }
 
         .overlay-control {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .overlay-control input[type="range"] {
-            width: 120px;
+            width: 100px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 2px;
+            background: var(--moma-gray-300);
+            border-radius: 0;
+        }
+
+        .overlay-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--moma-black);
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        .overlay-control input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: var(--moma-black);
+            border-radius: 0;
+            border: none;
             cursor: pointer;
         }
 
@@ -103,118 +185,242 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: var(--moma-black);
+        }
+
+        .opacity-value {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--moma-gray-500);
+            min-width: 36px;
+        }
+
+        /* Zoom controls for overlay */
+        .overlay-zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .zoom-value {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--moma-gray-500);
+            min-width: 40px;
+            text-align: center;
         }
 
         #map {
             width: 100%;
-            height: calc(100vh - 180px);
+            height: calc(100vh - 200px);
             min-height: 500px;
+            background: var(--moma-gray-100);
         }
 
         .quest-panel {
-            background: rgba(26, 15, 10, 0.95);
-            padding: 15px 20px;
-            border-top: 2px solid #8b6914;
+            background: var(--moma-white);
+            padding: 24px 32px;
+            border-top: 1px solid var(--moma-gray-200);
         }
 
         .quest-panel h3 {
-            color: #c9a227;
-            margin-bottom: 10px;
-            font-size: 1.2em;
+            color: var(--moma-black);
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .quest-panel p {
-            color: #b8a07a;
-            line-height: 1.6;
-            font-size: 0.95em;
+            color: var(--moma-gray-700);
+            line-height: 1.7;
+            font-size: 0.9375rem;
+            max-width: 800px;
+        }
+
+        .quest-panel strong {
+            color: var(--moma-black);
+            font-weight: 600;
         }
 
         .locations {
             display: flex;
-            gap: 15px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 16px;
             flex-wrap: wrap;
         }
 
         .location-btn {
             padding: 8px 16px;
-            font-size: 13px;
+            font-size: 0.75rem;
         }
 
+        /* Leaflet popup customization - MoMA style */
         .leaflet-popup-content-wrapper {
-            background: #2c1810;
-            color: #e8d5b7;
-            border: 2px solid #c9a227;
+            background: var(--moma-white);
+            color: var(--moma-black);
+            border-radius: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid var(--moma-gray-200);
         }
 
         .leaflet-popup-tip {
-            background: #2c1810;
+            background: var(--moma-white);
+            border: 1px solid var(--moma-gray-200);
+            box-shadow: none;
         }
 
         .leaflet-popup-content {
-            margin: 12px 15px;
+            margin: 16px 20px;
+            font-family: 'Inter', sans-serif;
         }
 
         .leaflet-popup-content h4 {
-            color: #c9a227;
-            margin-bottom: 5px;
+            color: var(--moma-black);
+            margin-bottom: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
         }
 
-        /* Custom marker styling */
-        .custom-marker {
-            background: #c9a227;
-            border: 2px solid #8b6914;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
+        .leaflet-popup-content p {
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: var(--moma-gray-700);
+        }
+
+        .leaflet-popup-content em {
+            font-style: normal;
+            color: var(--moma-gray-500);
+            font-size: 0.75rem;
+        }
+
+        /* Leaflet controls styling */
+        .leaflet-control-zoom a {
+            background: var(--moma-white) !important;
+            color: var(--moma-black) !important;
+            border: 1px solid var(--moma-gray-300) !important;
+            border-radius: 0 !important;
+            width: 32px !important;
+            height: 32px !important;
+            line-height: 30px !important;
+            font-weight: 400 !important;
+        }
+
+        .leaflet-control-zoom a:hover {
+            background: var(--moma-gray-100) !important;
+        }
+
+        .leaflet-control-zoom-in {
+            border-bottom: none !important;
+        }
+
+        .leaflet-control-scale-line {
+            border-color: var(--moma-black) !important;
+            background: rgba(255,255,255,0.8) !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.6875rem !important;
+        }
+
+        /* Divider */
+        .control-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--moma-gray-300);
         }
 
         @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 20px;
+                text-align: center;
+            }
+            
             .header h1 {
-                font-size: 1.5em;
+                font-size: 1.25rem;
             }
             
             .controls {
                 flex-direction: column;
-                gap: 10px;
+                gap: 16px;
+                padding: 16px 20px;
+            }
+
+            .control-divider {
+                display: none;
             }
             
             #map {
-                height: calc(100vh - 280px);
+                height: calc(100vh - 320px);
+            }
+
+            .quest-panel {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🗺️ Treasure of the Turkic Lands</h1>
-        <p class="subtitle">Follow the ancient Mahmud Kashgari map to discover the secrets of the Silk Road</p>
+        <div class="header-left">
+            <h1>Kashgari Map</h1>
+            <p class="subtitle">Turkic Lands of the Silk Road, 1072 CE</p>
+        </div>
+        <span class="header-badge">Interactive Map</span>
     </div>
 
     <div class="controls">
         <div class="control-group">
-            <label for="mapProvider">📍 Map Provider:</label>
+            <label for="mapProvider">Base Map</label>
             <select id="mapProvider">
                 <option value="osm">OpenStreetMap</option>
                 <option value="osm-topo">OpenTopoMap</option>
                 <option value="carto">CartoDB Voyager</option>
-                <option value="carto-dark">CartoDB Dark Matter</option>
+                <option value="carto-dark">CartoDB Dark</option>
             </select>
         </div>
 
+        <div class="control-divider"></div>
+
         <div class="control-group overlay-control">
             <input type="checkbox" id="showOverlay" checked>
-            <label for="showOverlay">🗺️ Kashgari Overlay</label>
+            <label for="showOverlay">Kashgari Overlay</label>
         </div>
 
         <div class="control-group overlay-control">
-            <label for="overlayOpacity">Opacity:</label>
+            <label for="overlayOpacity">Opacity</label>
             <input type="range" id="overlayOpacity" min="0" max="100" value="50">
-            <span id="opacityValue">50%</span>
+            <span id="opacityValue" class="opacity-value">50%</span>
         </div>
 
+        <div class="control-divider"></div>
+
         <div class="control-group">
-            <label>📌 Jump to:</label>
+            <label>Overlay Size</label>
+            <div class="overlay-zoom-controls">
+                <button class="zoom-btn" id="overlayZoomOut" title="Decrease overlay size">−</button>
+                <span id="overlayZoomValue" class="zoom-value">100%</span>
+                <button class="zoom-btn" id="overlayZoomIn" title="Increase overlay size">+</button>
+            </div>
+        </div>
+
+        <div class="control-divider"></div>
+
+        <div class="control-group">
+            <label>Location</label>
             <div class="locations">
                 <button class="location-btn" onclick="goToLocation('tokmok')">Tokmok</button>
                 <button class="location-btn" onclick="goToLocation('barskoon')">Barskoon</button>
@@ -226,13 +432,12 @@
     <div id="map"></div>
 
     <div class="quest-panel">
-        <h3>🔍 The Detective Quest: Search for Ancient Gold</h3>
+        <h3>The Quest for Ancient Gold</h3>
         <p>
-            <strong>Legend says:</strong> Along the ancient Silk Road, between the mountains of Tian Shan, 
-            Turkic traders hid treasures marked on the Mahmud Kashgari map from 1072 CE. 
+            <strong>The legend:</strong> Along the Silk Road, between the Tian Shan mountains, 
+            Turkic traders marked treasure locations on the Mahmud Kashgari map from 1072 CE. 
             The towns of <strong>Tokmok</strong> (ancient Suyab) and <strong>Barskoon</strong> hold clues 
-            to these lost riches. Use the overlay to match ancient landmarks with modern geography. 
-            The treasure awaits in the valleys where the old map aligns with the new...
+            to these lost riches. Adjust the overlay to align ancient landmarks with modern geography.
         </p>
     </div>
 
@@ -240,7 +445,7 @@
     <script>
         // Default locations in Kyrgyzstan
         const locations = {
-            tokmok: { lat: 42.8424, lng: 75.2988, zoom: 12, name: 'Tokmok', description: 'Ancient Suyab - Capital of the Western Turkic Khaganate' },
+            tokmok: { lat: 42.8424, lng: 75.2988, zoom: 12, name: 'Tokmok', description: 'Ancient Suyab — Capital of the Western Turkic Khaganate' },
             barskoon: { lat: 42.1344, lng: 77.5725, zoom: 13, name: 'Barskoon', description: 'Birthplace of Mahmud Kashgari, the great Turkic scholar' },
             overview: { lat: 42.5, lng: 76.5, zoom: 8, name: 'Kyrgyzstan Overview', description: 'The heart of ancient Turkic lands' }
         };
@@ -249,19 +454,19 @@
         const tileLayers = {
             osm: {
                 url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             },
             'osm-topo': {
                 url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://opentopomap.org">OpenTopoMap</a>'
             },
             carto: {
                 url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
             },
             'carto-dark': {
                 url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
             }
         };
 
@@ -274,36 +479,70 @@
             maxZoom: 18
         }).addTo(map);
 
-        // Kashgari map overlay bounds
-        // These bounds approximate the region shown in the Kashgari map
-        // Covering Central Asia - from roughly the Aral Sea region to western China
-        const overlayBounds = [
-            [35.0, 60.0],   // Southwest corner
-            [50.0, 90.0]    // Northeast corner
-        ];
+        // Kashgari map overlay configuration
+        // Base bounds for the overlay (Central Asia region)
+        const baseBounds = {
+            south: 35.0,
+            west: 60.0,
+            north: 50.0,
+            east: 90.0
+        };
 
-        // Create the Kashgari overlay
-        const kashgariOverlay = L.imageOverlay('kashgari.jpeg', overlayBounds, {
+        // Overlay scale factor (100% = default size)
+        let overlayScale = 1.0;
+
+        // Calculate bounds based on scale
+        function calculateOverlayBounds(scale) {
+            const centerLat = (baseBounds.south + baseBounds.north) / 2;
+            const centerLng = (baseBounds.west + baseBounds.east) / 2;
+            const halfLatSpan = ((baseBounds.north - baseBounds.south) / 2) * scale;
+            const halfLngSpan = ((baseBounds.east - baseBounds.west) / 2) * scale;
+            
+            return [
+                [centerLat - halfLatSpan, centerLng - halfLngSpan],
+                [centerLat + halfLatSpan, centerLng + halfLngSpan]
+            ];
+        }
+
+        // Create the Kashgari SVG overlay
+        let kashgariOverlay = L.imageOverlay('kashgari.svg', calculateOverlayBounds(overlayScale), {
             opacity: 0.5,
             interactive: false
         }).addTo(map);
 
-        // Add markers for key locations
-        const goldIcon = L.divIcon({
+        // Update overlay bounds when scale changes
+        function updateOverlayScale(newScale) {
+            overlayScale = Math.max(0.5, Math.min(3.0, newScale)); // Clamp between 50% and 300%
+            const newBounds = calculateOverlayBounds(overlayScale);
+            kashgariOverlay.setBounds(newBounds);
+            document.getElementById('overlayZoomValue').textContent = Math.round(overlayScale * 100) + '%';
+        }
+
+        // Overlay zoom controls
+        document.getElementById('overlayZoomIn').addEventListener('click', function() {
+            updateOverlayScale(overlayScale + 0.1);
+        });
+
+        document.getElementById('overlayZoomOut').addEventListener('click', function() {
+            updateOverlayScale(overlayScale - 0.1);
+        });
+
+        // Add markers for key locations - MoMA style minimal markers
+        const momaIcon = L.divIcon({
             className: 'custom-div-icon',
-            html: '<div style="background-color: #c9a227; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #8b6914; display: flex; align-items: center; justify-content: center; font-size: 14px;">📍</div>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
+            html: '<div style="background-color: #1a1a1a; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+            iconSize: [12, 12],
+            iconAnchor: [6, 6]
         });
 
         // Add markers for Tokmok and Barskoon
-        const tokmokMarker = L.marker([locations.tokmok.lat, locations.tokmok.lng], { icon: goldIcon })
+        const tokmokMarker = L.marker([locations.tokmok.lat, locations.tokmok.lng], { icon: momaIcon })
             .addTo(map)
-            .bindPopup(`<h4>${locations.tokmok.name}</h4><p>${locations.tokmok.description}</p><p><em>Coordinates: ${locations.tokmok.lat}, ${locations.tokmok.lng}</em></p>`);
+            .bindPopup(`<h4>${locations.tokmok.name}</h4><p>${locations.tokmok.description}</p><p><em>${locations.tokmok.lat}, ${locations.tokmok.lng}</em></p>`);
 
-        const barskoonMarker = L.marker([locations.barskoon.lat, locations.barskoon.lng], { icon: goldIcon })
+        const barskoonMarker = L.marker([locations.barskoon.lat, locations.barskoon.lng], { icon: momaIcon })
             .addTo(map)
-            .bindPopup(`<h4>${locations.barskoon.name}</h4><p>${locations.barskoon.description}</p><p><em>Coordinates: ${locations.barskoon.lat}, ${locations.barskoon.lng}</em></p>`);
+            .bindPopup(`<h4>${locations.barskoon.name}</h4><p>${locations.barskoon.description}</p><p><em>${locations.barskoon.lat}, ${locations.barskoon.lng}</em></p>`);
 
         // Event handlers
         document.getElementById('mapProvider').addEventListener('change', function(e) {
@@ -353,13 +592,13 @@
         // Add a scale control
         L.control.scale({ imperial: false }).addTo(map);
 
-        // Add click handler to show coordinates (helpful for quest)
+        // Add click handler to show coordinates
         map.on('click', function(e) {
             const lat = e.latlng.lat.toFixed(4);
             const lng = e.latlng.lng.toFixed(4);
             L.popup()
                 .setLatLng(e.latlng)
-                .setContent(`<strong>Coordinates</strong><br>Lat: ${lat}<br>Lng: ${lng}<br><em>Mark this location for your quest!</em>`)
+                .setContent(`<h4>Coordinates</h4><p>Lat: ${lat}<br>Lng: ${lng}</p>`)
                 .openOn(map);
         });
     </script>
