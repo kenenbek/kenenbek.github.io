@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure of the Turkic Lands - Kashgari Quest</title>
+    <link rel="stylesheet" href="lib/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2c1810 0%, #4a3228 100%);
+            color: #e8d5b7;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #1a0f0a 0%, #2c1810 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #c9a227;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #c9a227;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-style: italic;
+            color: #b8a07a;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: rgba(26, 15, 10, 0.95);
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #8b6914;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: #c9a227;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            border: 2px solid #8b6914;
+            border-radius: 5px;
+            background: #3d2817;
+            color: #e8d5b7;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:hover, button:hover {
+            background: #5a3d2a;
+            border-color: #c9a227;
+        }
+
+        button {
+            background: linear-gradient(180deg, #8b6914 0%, #5a4510 100%);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: linear-gradient(180deg, #c9a227 0%, #8b6914 100%);
+        }
+
+        .overlay-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .overlay-control input[type="range"] {
+            width: 120px;
+            cursor: pointer;
+        }
+
+        .overlay-control input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 180px);
+            min-height: 500px;
+        }
+
+        .quest-panel {
+            background: rgba(26, 15, 10, 0.95);
+            padding: 15px 20px;
+            border-top: 2px solid #8b6914;
+        }
+
+        .quest-panel h3 {
+            color: #c9a227;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .quest-panel p {
+            color: #b8a07a;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .locations {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .location-btn {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: #2c1810;
+            color: #e8d5b7;
+            border: 2px solid #c9a227;
+        }
+
+        .leaflet-popup-tip {
+            background: #2c1810;
+        }
+
+        .leaflet-popup-content {
+            margin: 12px 15px;
+        }
+
+        .leaflet-popup-content h4 {
+            color: #c9a227;
+            margin-bottom: 5px;
+        }
+
+        /* Custom marker styling */
+        .custom-marker {
+            background: #c9a227;
+            border: 2px solid #8b6914;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            #map {
+                height: calc(100vh - 280px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗺️ Treasure of the Turkic Lands</h1>
+        <p class="subtitle">Follow the ancient Mahmud Kashgari map to discover the secrets of the Silk Road</p>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="mapProvider">📍 Map Provider:</label>
+            <select id="mapProvider">
+                <option value="osm">OpenStreetMap</option>
+                <option value="osm-topo">OpenTopoMap</option>
+                <option value="carto">CartoDB Voyager</option>
+                <option value="carto-dark">CartoDB Dark Matter</option>
+            </select>
+        </div>
+
+        <div class="control-group overlay-control">
+            <input type="checkbox" id="showOverlay" checked>
+            <label for="showOverlay">🗺️ Kashgari Overlay</label>
+        </div>
+
+        <div class="control-group overlay-control">
+            <label for="overlayOpacity">Opacity:</label>
+            <input type="range" id="overlayOpacity" min="0" max="100" value="50">
+            <span id="opacityValue">50%</span>
+        </div>
+
+        <div class="control-group">
+            <label>📌 Jump to:</label>
+            <div class="locations">
+                <button class="location-btn" onclick="goToLocation('tokmok')">Tokmok</button>
+                <button class="location-btn" onclick="goToLocation('barskoon')">Barskoon</button>
+                <button class="location-btn" onclick="goToLocation('overview')">Overview</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="quest-panel">
+        <h3>🔍 The Detective Quest: Search for Ancient Gold</h3>
+        <p>
+            <strong>Legend says:</strong> Along the ancient Silk Road, between the mountains of Tian Shan, 
+            Turkic traders hid treasures marked on the Mahmud Kashgari map from 1072 CE. 
+            The towns of <strong>Tokmok</strong> (ancient Suyab) and <strong>Barskoon</strong> hold clues 
+            to these lost riches. Use the overlay to match ancient landmarks with modern geography. 
+            The treasure awaits in the valleys where the old map aligns with the new...
+        </p>
+    </div>
+
+    <script src="lib/leaflet.js"></script>
+    <script>
+        // Default locations in Kyrgyzstan
+        const locations = {
+            tokmok: { lat: 42.8424, lng: 75.2988, zoom: 12, name: 'Tokmok', description: 'Ancient Suyab - Capital of the Western Turkic Khaganate' },
+            barskoon: { lat: 42.1344, lng: 77.5725, zoom: 13, name: 'Barskoon', description: 'Birthplace of Mahmud Kashgari, the great Turkic scholar' },
+            overview: { lat: 42.5, lng: 76.5, zoom: 8, name: 'Kyrgyzstan Overview', description: 'The heart of ancient Turkic lands' }
+        };
+
+        // Map tile providers
+        const tileLayers = {
+            osm: {
+                url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            },
+            'osm-topo': {
+                url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+            },
+            carto: {
+                url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            },
+            'carto-dark': {
+                url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }
+        };
+
+        // Initialize map centered on the overview area
+        const map = L.map('map').setView([locations.overview.lat, locations.overview.lng], locations.overview.zoom);
+
+        // Current base layer
+        let currentBaseLayer = L.tileLayer(tileLayers.osm.url, {
+            attribution: tileLayers.osm.attribution,
+            maxZoom: 18
+        }).addTo(map);
+
+        // Kashgari map overlay bounds
+        // These bounds approximate the region shown in the Kashgari map
+        // Covering Central Asia - from roughly the Aral Sea region to western China
+        const overlayBounds = [
+            [35.0, 60.0],   // Southwest corner
+            [50.0, 90.0]    // Northeast corner
+        ];
+
+        // Create the Kashgari overlay
+        const kashgariOverlay = L.imageOverlay('kashgari.jpeg', overlayBounds, {
+            opacity: 0.5,
+            interactive: false
+        }).addTo(map);
+
+        // Add markers for key locations
+        const goldIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: '<div style="background-color: #c9a227; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #8b6914; display: flex; align-items: center; justify-content: center; font-size: 14px;">📍</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        // Add markers for Tokmok and Barskoon
+        const tokmokMarker = L.marker([locations.tokmok.lat, locations.tokmok.lng], { icon: goldIcon })
+            .addTo(map)
+            .bindPopup(`<h4>${locations.tokmok.name}</h4><p>${locations.tokmok.description}</p><p><em>Coordinates: ${locations.tokmok.lat}, ${locations.tokmok.lng}</em></p>`);
+
+        const barskoonMarker = L.marker([locations.barskoon.lat, locations.barskoon.lng], { icon: goldIcon })
+            .addTo(map)
+            .bindPopup(`<h4>${locations.barskoon.name}</h4><p>${locations.barskoon.description}</p><p><em>Coordinates: ${locations.barskoon.lat}, ${locations.barskoon.lng}</em></p>`);
+
+        // Event handlers
+        document.getElementById('mapProvider').addEventListener('change', function(e) {
+            const provider = e.target.value;
+            const layer = tileLayers[provider];
+            
+            map.removeLayer(currentBaseLayer);
+            currentBaseLayer = L.tileLayer(layer.url, {
+                attribution: layer.attribution,
+                maxZoom: 18
+            }).addTo(map);
+            
+            // Ensure overlay stays on top
+            if (document.getElementById('showOverlay').checked) {
+                kashgariOverlay.bringToFront();
+            }
+        });
+
+        document.getElementById('showOverlay').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                kashgariOverlay.addTo(map);
+            } else {
+                map.removeLayer(kashgariOverlay);
+            }
+        });
+
+        document.getElementById('overlayOpacity').addEventListener('input', function(e) {
+            const opacity = e.target.value / 100;
+            kashgariOverlay.setOpacity(opacity);
+            document.getElementById('opacityValue').textContent = e.target.value + '%';
+        });
+
+        function goToLocation(locationKey) {
+            const loc = locations[locationKey];
+            map.flyTo([loc.lat, loc.lng], loc.zoom, {
+                duration: 1.5
+            });
+            
+            // Open popup for city markers
+            if (locationKey === 'tokmok') {
+                tokmokMarker.openPopup();
+            } else if (locationKey === 'barskoon') {
+                barskoonMarker.openPopup();
+            }
+        }
+
+        // Add a scale control
+        L.control.scale({ imperial: false }).addTo(map);
+
+        // Add click handler to show coordinates (helpful for quest)
+        map.on('click', function(e) {
+            const lat = e.latlng.lat.toFixed(4);
+            const lng = e.latlng.lng.toFixed(4);
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(`<strong>Coordinates</strong><br>Lat: ${lat}<br>Lng: ${lng}<br><em>Mark this location for your quest!</em>`)
+                .openOn(map);
+        });
+    </script>
+</body>
+</html>
