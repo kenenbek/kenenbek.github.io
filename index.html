@@ -488,6 +488,11 @@
             east: 90.0
         };
 
+        // Overlay scale limits and settings
+        const OVERLAY_MIN_SCALE = 0.5;  // 50% minimum size
+        const OVERLAY_MAX_SCALE = 3.0;  // 300% maximum size
+        const OVERLAY_SCALE_STEP = 0.1; // 10% increment per click
+
         // Overlay scale factor (100% = default size)
         let overlayScale = 1.0;
 
@@ -512,7 +517,7 @@
 
         // Update overlay bounds when scale changes
         function updateOverlayScale(newScale) {
-            overlayScale = Math.max(0.5, Math.min(3.0, newScale)); // Clamp between 50% and 300%
+            overlayScale = Math.max(OVERLAY_MIN_SCALE, Math.min(OVERLAY_MAX_SCALE, newScale));
             const newBounds = calculateOverlayBounds(overlayScale);
             kashgariOverlay.setBounds(newBounds);
             document.getElementById('overlayZoomValue').textContent = Math.round(overlayScale * 100) + '%';
@@ -520,11 +525,11 @@
 
         // Overlay zoom controls
         document.getElementById('overlayZoomIn').addEventListener('click', function() {
-            updateOverlayScale(overlayScale + 0.1);
+            updateOverlayScale(overlayScale + OVERLAY_SCALE_STEP);
         });
 
         document.getElementById('overlayZoomOut').addEventListener('click', function() {
-            updateOverlayScale(overlayScale - 0.1);
+            updateOverlayScale(overlayScale - OVERLAY_SCALE_STEP);
         });
 
         // Add markers for key locations - MoMA style minimal markers

@@ -210,7 +210,7 @@
     <text x="450" y="590" text-anchor="middle">arḍ al kāīrouān ūa ǧaīruha</text>
     
     <!-- Eastern regions -->
-    <text x="620" cy="280" text-anchor="middle">kāšmīn</text>
+    <text x="620" y="280" text-anchor="middle">kāšmīn</text>
     <text x="680" y="300" text-anchor="middle" font-style="italic">serandīb</text>
     <text x="700" y="330" text-anchor="middle">ǧebel serandīb</text>
     <text x="680" y="360" text-anchor="middle">bilād hind</text>
