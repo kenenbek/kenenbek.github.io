@@ -714,15 +714,16 @@
 
         // Kashgari map overlay configuration
         // Base bounds for the overlay (Central Asia region)
+        // Center adjusted to align with Burana Tower (42.7475, 75.2517)
         const baseBounds = {
-            south: 35.0,
-            west: 60.0,
-            north: 50.0,
-            east: 90.0
+            south: 35.2475,
+            west: 60.2517,
+            north: 50.2475,
+            east: 90.2517
         };
 
         // Overlay scale limits and settings
-        const OVERLAY_MIN_SCALE = 0.05;  // 5% minimum size (city level)
+        const OVERLAY_MIN_SCALE = 0.01;  // 1% minimum size (allows very small overlay)
         const OVERLAY_MAX_SCALE = 3.0;   // 300% maximum size
         const OVERLAY_SCALE_STEP = 0.1;  // 10% increment per click
 
@@ -771,11 +772,20 @@
 
         // Update overlay rotation using CSS transform
         function updateOverlayRotation(newRotation) {
-            overlayRotation = newRotation % 360;
-            if (overlayRotation < 0) overlayRotation += 360;
+            // Normalize rotation to -180 to 180 range for more intuitive control
+            overlayRotation = newRotation;
+            while (overlayRotation > 180) overlayRotation -= 360;
+            while (overlayRotation < -180) overlayRotation += 360;
+            
             const overlayElement = kashgariOverlay.getElement();
             if (overlayElement) {
-                overlayElement.style.transformOrigin = 'center center';
+                // Get the element's bounding rect to calculate correct center
+                const rect = overlayElement.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Set transform origin to exact center of the element
+                overlayElement.style.transformOrigin = `${centerX}px ${centerY}px`;
                 overlayElement.style.transform = `rotate(${overlayRotation}deg)`;
             }
             document.getElementById('overlayRotationValue').textContent = overlayRotation + '°';
@@ -790,7 +800,7 @@
             updateOverlayRotation(overlayRotation + OVERLAY_ROTATION_STEP);
         });
 
-        // Reapply rotation when overlay bounds change
+        // Reapply rotation when overlay bounds change or map moves
         const originalSetBounds = kashgariOverlay.setBounds;
         kashgariOverlay.setBounds = function(bounds) {
             originalSetBounds.call(this, bounds);
@@ -798,6 +808,13 @@
             requestAnimationFrame(() => updateOverlayRotation(overlayRotation));
             return this;
         };
+
+        // Reapply rotation on map zoom/move events
+        map.on('zoomend moveend', function() {
+            if (overlayRotation !== 0) {
+                requestAnimationFrame(() => updateOverlayRotation(overlayRotation));
+            }
+        });
 
         // Add markers for key locations - MoMA style minimal markers
         const momaIcon = L.divIcon({
