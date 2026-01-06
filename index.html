@@ -794,8 +794,8 @@
         const originalSetBounds = kashgariOverlay.setBounds;
         kashgariOverlay.setBounds = function(bounds) {
             originalSetBounds.call(this, bounds);
-            // Reapply rotation after bounds update
-            setTimeout(() => updateOverlayRotation(overlayRotation), 10);
+            // Reapply rotation after bounds update using requestAnimationFrame for reliability
+            requestAnimationFrame(() => updateOverlayRotation(overlayRotation));
             return this;
         };
 
@@ -911,14 +911,24 @@
                 document.documentElement.requestFullscreen().catch(err => {
                     console.log('Fullscreen not supported:', err);
                 });
-                fullscreenBtn.textContent = '⛶';
+                fullscreenBtn.textContent = '⮌';
+                fullscreenBtn.title = 'Exit fullscreen (F)';
             } else {
                 document.exitFullscreen();
                 fullscreenBtn.textContent = '⛶';
+                fullscreenBtn.title = 'Toggle fullscreen (F)';
             }
         }
         
         fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // Listen for fullscreen change events (e.g., user presses Escape)
+        document.addEventListener('fullscreenchange', function() {
+            if (!document.fullscreenElement) {
+                fullscreenBtn.textContent = '⛶';
+                fullscreenBtn.title = 'Toggle fullscreen (F)';
+            }
+        });
 
         // Toggle shortcuts help visibility
         const shortcutsHelp = document.getElementById('shortcutsHelp');
@@ -980,8 +990,10 @@
             }
         });
 
-        // Open Burana Tower popup on initial load
-        setTimeout(() => buranaMarker.openPopup(), 500);
+        // Open Burana Tower popup when map is ready
+        map.whenReady(function() {
+            buranaMarker.openPopup();
+        });
     </script>
 </body>
 </html>
