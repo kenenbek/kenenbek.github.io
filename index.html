@@ -713,13 +713,20 @@
         }).addTo(map);
 
         // Kashgari map overlay configuration
+        // Burana Tower coordinates - used to center the overlay
+        const BURANA_TOWER_LAT = 42.7475;
+        const BURANA_TOWER_LNG = 75.2517;
+        
         // Base bounds for the overlay (Central Asia region)
-        // Center adjusted to align with Burana Tower (42.7475, 75.2517)
+        // Original bounds span: lat 35-50 (15° span), lng 60-90 (30° span)
+        // Center adjusted to align overlay center with Burana Tower location
+        const ORIGINAL_LAT_SPAN = 15;  // Original latitude range
+        const ORIGINAL_LNG_SPAN = 30;  // Original longitude range
         const baseBounds = {
-            south: 35.2475,
-            west: 60.2517,
-            north: 50.2475,
-            east: 90.2517
+            south: BURANA_TOWER_LAT - (ORIGINAL_LAT_SPAN / 2),
+            west: BURANA_TOWER_LNG - (ORIGINAL_LNG_SPAN / 2),
+            north: BURANA_TOWER_LAT + (ORIGINAL_LAT_SPAN / 2),
+            east: BURANA_TOWER_LNG + (ORIGINAL_LNG_SPAN / 2)
         };
 
         // Overlay scale limits and settings
@@ -771,6 +778,7 @@
         let overlayRotation = 0;
 
         // Update overlay rotation using CSS transform
+        // Uses 'center center' which is simpler and more reliable than calculating pixel values
         function updateOverlayRotation(newRotation) {
             // Normalize rotation to -180 to 180 range for more intuitive control
             overlayRotation = newRotation;
@@ -779,13 +787,8 @@
             
             const overlayElement = kashgariOverlay.getElement();
             if (overlayElement) {
-                // Get the element's bounding rect to calculate correct center
-                const rect = overlayElement.getBoundingClientRect();
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                // Set transform origin to exact center of the element
-                overlayElement.style.transformOrigin = `${centerX}px ${centerY}px`;
+                // Use CSS 'center center' for transform origin - more reliable than pixel calculations
+                overlayElement.style.transformOrigin = 'center center';
                 overlayElement.style.transform = `rotate(${overlayRotation}deg)`;
             }
             document.getElementById('overlayRotationValue').textContent = overlayRotation + '°';
@@ -809,10 +812,15 @@
             return this;
         };
 
-        // Reapply rotation on map zoom/move events
+        // Debounced rotation reapply for map zoom/move events
+        let rotationUpdateTimeout = null;
         map.on('zoomend moveend', function() {
             if (overlayRotation !== 0) {
-                requestAnimationFrame(() => updateOverlayRotation(overlayRotation));
+                // Debounce to avoid multiple rapid updates
+                if (rotationUpdateTimeout) clearTimeout(rotationUpdateTimeout);
+                rotationUpdateTimeout = setTimeout(() => {
+                    requestAnimationFrame(() => updateOverlayRotation(overlayRotation));
+                }, 100);
             }
         });
 
