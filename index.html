@@ -341,34 +341,233 @@
             background: var(--moma-gray-300);
         }
 
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--moma-white);
+            border: 1px solid var(--moma-gray-300);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--moma-gray-100);
+            color: var(--moma-black);
+        }
+
+        /* Keyboard shortcuts help */
+        .shortcuts-help {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid var(--moma-gray-300);
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            max-width: 280px;
+        }
+
+        .shortcuts-help h5 {
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .shortcuts-help table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .shortcuts-help td {
+            padding: 2px 0;
+        }
+
+        .shortcuts-help td:first-child {
+            font-weight: 500;
+            color: var(--moma-gray-700);
+            padding-right: 12px;
+        }
+
+        .shortcuts-help .key {
+            display: inline-block;
+            background: var(--moma-gray-100);
+            border: 1px solid var(--moma-gray-300);
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-right: 4px;
+        }
+
+        /* Toggle controls button for mobile */
+        .toggle-controls-btn {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            font-size: 1.25rem;
+            background: var(--moma-white);
+            border: 1px solid var(--moma-gray-300);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .controls.collapsed {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
-                gap: 12px;
-                padding: 20px;
+                gap: 8px;
+                padding: 12px 16px;
                 text-align: center;
             }
             
             .header h1 {
-                font-size: 1.25rem;
+                font-size: 1.125rem;
+            }
+
+            .header .subtitle {
+                font-size: 0.75rem;
+            }
+
+            .header-badge {
+                display: none;
             }
             
             .controls {
                 flex-direction: column;
-                gap: 16px;
-                padding: 16px 20px;
+                gap: 12px;
+                padding: 12px 16px;
+                max-height: 300px;
+                overflow-y: auto;
             }
 
             .control-divider {
                 display: none;
             }
+
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .control-group label {
+                font-size: 0.75rem;
+            }
+
+            .locations {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                width: 100%;
+            }
+
+            .location-btn {
+                padding: 12px 8px;
+                font-size: 0.7rem;
+                width: 100%;
+            }
+
+            select {
+                width: 100%;
+            }
             
             #map {
-                height: calc(100vh - 320px);
+                height: calc(100vh - 180px);
             }
 
             .quest-panel {
-                padding: 20px;
+                padding: 16px;
+            }
+
+            .quest-panel h3 {
+                font-size: 0.75rem;
+            }
+
+            .quest-panel p {
+                font-size: 0.8125rem;
+                line-height: 1.5;
+            }
+
+            .toggle-controls-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .shortcuts-help {
+                display: none;
+            }
+
+            .fullscreen-btn {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            /* Overlay controls more touch-friendly */
+            .zoom-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+
+            .overlay-control input[type="range"] {
+                width: 120px;
+                height: 6px;
+            }
+
+            .overlay-control input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+            }
+
+            .overlay-control input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+            }
+
+            .overlay-control input[type="checkbox"] {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* Desktop enhancements */
+        @media (min-width: 769px) {
+            .controls {
+                position: relative;
+            }
+
+            /* Hover tooltips for desktop */
+            .location-btn:hover::after,
+            .zoom-btn:hover::after {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--moma-black);
+                color: var(--moma-white);
+                padding: 4px 8px;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                pointer-events: none;
             }
         }
     </style>
@@ -420,8 +619,21 @@
         <div class="control-divider"></div>
 
         <div class="control-group">
+            <label>Rotation</label>
+            <div class="overlay-zoom-controls">
+                <button class="zoom-btn" id="overlayRotateLeft" title="Rotate left">↺</button>
+                <span id="overlayRotationValue" class="zoom-value">0°</span>
+                <button class="zoom-btn" id="overlayRotateRight" title="Rotate right">↻</button>
+            </div>
+        </div>
+
+        <div class="control-divider"></div>
+
+        <div class="control-group">
             <label>Location</label>
             <div class="locations">
+                <button class="location-btn" onclick="goToLocation('burana')">Burana Tower</button>
+                <button class="location-btn" onclick="goToLocation('bishkek')">Bishkek</button>
                 <button class="location-btn" onclick="goToLocation('tokmok')">Tokmok</button>
                 <button class="location-btn" onclick="goToLocation('barskoon')">Barskoon</button>
                 <button class="location-btn" onclick="goToLocation('overview')">Overview</button>
@@ -430,6 +642,25 @@
     </div>
 
     <div id="map"></div>
+
+    <!-- Toggle controls button for mobile -->
+    <button class="toggle-controls-btn" id="toggleControls" title="Toggle controls">☰</button>
+
+    <!-- Fullscreen button -->
+    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle fullscreen (F)">⛶</button>
+
+    <!-- Keyboard shortcuts help for desktop -->
+    <div class="shortcuts-help" id="shortcutsHelp">
+        <h5>Keyboard Shortcuts</h5>
+        <table>
+            <tr><td><span class="key">+</span> / <span class="key">-</span></td><td>Overlay size</td></tr>
+            <tr><td><span class="key">[</span> / <span class="key">]</span></td><td>Rotate overlay</td></tr>
+            <tr><td><span class="key">O</span></td><td>Toggle overlay</td></tr>
+            <tr><td><span class="key">F</span></td><td>Fullscreen</td></tr>
+            <tr><td><span class="key">1-5</span></td><td>Go to location</td></tr>
+            <tr><td><span class="key">?</span></td><td>Toggle help</td></tr>
+        </table>
+    </div>
 
     <div class="quest-panel">
         <h3>The Quest for Ancient Gold</h3>
@@ -445,6 +676,8 @@
     <script>
         // Default locations in Kyrgyzstan
         const locations = {
+            burana: { lat: 42.7475, lng: 75.2517, zoom: 14, name: 'Burana Tower', description: 'Ancient minaret from the Karakhanid era, 11th century — near the ruins of Balasagun' },
+            bishkek: { lat: 42.8746, lng: 74.5698, zoom: 12, name: 'Bishkek', description: 'Capital of Kyrgyzstan — modern gateway to the Silk Road' },
             tokmok: { lat: 42.8424, lng: 75.2988, zoom: 12, name: 'Tokmok', description: 'Ancient Suyab — Capital of the Western Turkic Khaganate' },
             barskoon: { lat: 42.1344, lng: 77.5725, zoom: 13, name: 'Barskoon', description: 'Birthplace of Mahmud Kashgari, the great Turkic scholar' },
             overview: { lat: 42.5, lng: 76.5, zoom: 8, name: 'Kyrgyzstan Overview', description: 'The heart of ancient Turkic lands' }
@@ -470,8 +703,8 @@
             }
         };
 
-        // Initialize map centered on the overview area
-        const map = L.map('map').setView([locations.overview.lat, locations.overview.lng], locations.overview.zoom);
+        // Initialize map centered on Burana Tower (default location)
+        const map = L.map('map').setView([locations.burana.lat, locations.burana.lng], locations.burana.zoom);
 
         // Current base layer
         let currentBaseLayer = L.tileLayer(tileLayers.osm.url, {
@@ -489,9 +722,9 @@
         };
 
         // Overlay scale limits and settings
-        const OVERLAY_MIN_SCALE = 0.5;  // 50% minimum size
-        const OVERLAY_MAX_SCALE = 3.0;  // 300% maximum size
-        const OVERLAY_SCALE_STEP = 0.1; // 10% increment per click
+        const OVERLAY_MIN_SCALE = 0.05;  // 5% minimum size (city level)
+        const OVERLAY_MAX_SCALE = 3.0;   // 300% maximum size
+        const OVERLAY_SCALE_STEP = 0.1;  // 10% increment per click
 
         // Overlay scale factor (100% = default size)
         let overlayScale = 1.0;
@@ -532,6 +765,40 @@
             updateOverlayScale(overlayScale - OVERLAY_SCALE_STEP);
         });
 
+        // Overlay rotation settings
+        const OVERLAY_ROTATION_STEP = 15; // 15 degrees per click
+        let overlayRotation = 0;
+
+        // Update overlay rotation using CSS transform
+        function updateOverlayRotation(newRotation) {
+            overlayRotation = newRotation % 360;
+            if (overlayRotation < 0) overlayRotation += 360;
+            const overlayElement = kashgariOverlay.getElement();
+            if (overlayElement) {
+                overlayElement.style.transformOrigin = 'center center';
+                overlayElement.style.transform = `rotate(${overlayRotation}deg)`;
+            }
+            document.getElementById('overlayRotationValue').textContent = overlayRotation + '°';
+        }
+
+        // Overlay rotation controls
+        document.getElementById('overlayRotateLeft').addEventListener('click', function() {
+            updateOverlayRotation(overlayRotation - OVERLAY_ROTATION_STEP);
+        });
+
+        document.getElementById('overlayRotateRight').addEventListener('click', function() {
+            updateOverlayRotation(overlayRotation + OVERLAY_ROTATION_STEP);
+        });
+
+        // Reapply rotation when overlay bounds change
+        const originalSetBounds = kashgariOverlay.setBounds;
+        kashgariOverlay.setBounds = function(bounds) {
+            originalSetBounds.call(this, bounds);
+            // Reapply rotation after bounds update
+            setTimeout(() => updateOverlayRotation(overlayRotation), 10);
+            return this;
+        };
+
         // Add markers for key locations - MoMA style minimal markers
         const momaIcon = L.divIcon({
             className: 'custom-div-icon',
@@ -540,7 +807,23 @@
             iconAnchor: [6, 6]
         });
 
-        // Add markers for Tokmok and Barskoon
+        // Special icon for Burana Tower (highlighted)
+        const buranaIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: '<div style="background-color: #e53935; width: 16px; height: 16px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 12px rgba(229,57,53,0.5);"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+
+        // Add markers for all locations
+        const buranaMarker = L.marker([locations.burana.lat, locations.burana.lng], { icon: buranaIcon })
+            .addTo(map)
+            .bindPopup(`<h4>${locations.burana.name}</h4><p>${locations.burana.description}</p><p><em>${locations.burana.lat}, ${locations.burana.lng}</em></p>`);
+
+        const bishkekMarker = L.marker([locations.bishkek.lat, locations.bishkek.lng], { icon: momaIcon })
+            .addTo(map)
+            .bindPopup(`<h4>${locations.bishkek.name}</h4><p>${locations.bishkek.description}</p><p><em>${locations.bishkek.lat}, ${locations.bishkek.lng}</em></p>`);
+
         const tokmokMarker = L.marker([locations.tokmok.lat, locations.tokmok.lng], { icon: momaIcon })
             .addTo(map)
             .bindPopup(`<h4>${locations.tokmok.name}</h4><p>${locations.tokmok.description}</p><p><em>${locations.tokmok.lat}, ${locations.tokmok.lng}</em></p>`);
@@ -586,8 +869,12 @@
                 duration: 1.5
             });
             
-            // Open popup for city markers
-            if (locationKey === 'tokmok') {
+            // Open popup for markers
+            if (locationKey === 'burana') {
+                buranaMarker.openPopup();
+            } else if (locationKey === 'bishkek') {
+                bishkekMarker.openPopup();
+            } else if (locationKey === 'tokmok') {
                 tokmokMarker.openPopup();
             } else if (locationKey === 'barskoon') {
                 barskoonMarker.openPopup();
@@ -606,6 +893,95 @@
                 .setContent(`<h4>Coordinates</h4><p>Lat: ${lat}<br>Lng: ${lng}</p>`)
                 .openOn(map);
         });
+
+        // Mobile: Toggle controls panel
+        const toggleControlsBtn = document.getElementById('toggleControls');
+        const controlsPanel = document.querySelector('.controls');
+        
+        toggleControlsBtn.addEventListener('click', function() {
+            controlsPanel.classList.toggle('collapsed');
+            this.textContent = controlsPanel.classList.contains('collapsed') ? '☰' : '✕';
+        });
+
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen not supported:', err);
+                });
+                fullscreenBtn.textContent = '⛶';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.textContent = '⛶';
+            }
+        }
+        
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // Toggle shortcuts help visibility
+        const shortcutsHelp = document.getElementById('shortcutsHelp');
+        let shortcutsVisible = true;
+
+        function toggleShortcutsHelp() {
+            shortcutsVisible = !shortcutsVisible;
+            shortcutsHelp.style.display = shortcutsVisible ? 'block' : 'none';
+        }
+
+        // Keyboard shortcuts (desktop)
+        document.addEventListener('keydown', function(e) {
+            // Don't handle shortcuts when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            
+            switch(e.key) {
+                case '+':
+                case '=':
+                    updateOverlayScale(overlayScale + OVERLAY_SCALE_STEP);
+                    break;
+                case '-':
+                case '_':
+                    updateOverlayScale(overlayScale - OVERLAY_SCALE_STEP);
+                    break;
+                case '[':
+                    updateOverlayRotation(overlayRotation - OVERLAY_ROTATION_STEP);
+                    break;
+                case ']':
+                    updateOverlayRotation(overlayRotation + OVERLAY_ROTATION_STEP);
+                    break;
+                case 'o':
+                case 'O':
+                    const overlayCheckbox = document.getElementById('showOverlay');
+                    overlayCheckbox.checked = !overlayCheckbox.checked;
+                    overlayCheckbox.dispatchEvent(new Event('change'));
+                    break;
+                case 'f':
+                case 'F':
+                    toggleFullscreen();
+                    break;
+                case '1':
+                    goToLocation('burana');
+                    break;
+                case '2':
+                    goToLocation('bishkek');
+                    break;
+                case '3':
+                    goToLocation('tokmok');
+                    break;
+                case '4':
+                    goToLocation('barskoon');
+                    break;
+                case '5':
+                    goToLocation('overview');
+                    break;
+                case '?':
+                    toggleShortcutsHelp();
+                    break;
+            }
+        });
+
+        // Open Burana Tower popup on initial load
+        setTimeout(() => buranaMarker.openPopup(), 500);
     </script>
 </body>
 </html>
